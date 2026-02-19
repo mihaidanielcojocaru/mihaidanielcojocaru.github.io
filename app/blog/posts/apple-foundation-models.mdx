@@ -1,0 +1,77 @@
+---
+title: 'Working with Apple Foundation Models'
+publishedAt: '2025-12-07'
+summary: 'An introduction to the Apple Foundation Models framework, powering on-device intelligence with Swift.'
+image: '/blog/apple-foundation-models.png'
+---
+
+Apple has introduced the **Foundation Models framework**, a powerful new toolset that allows developers to integrate on-device large language models directly into their iOS and macOS applications. This framework is the engine behind **Apple Intelligence**, enabling features that are both smart and privacy-preserving.
+
+## What are Apple Foundation Models?
+
+The Foundation Models framework provides access to Apple's own 3-billion-parameter language model. Unlike cloud-based solutions, this model runs entirely on your device. This approach offers significant benefits:
+
+*   **Privacy First:** Your data never leaves your device.
+*   **Zero Cost:** No recurring API fees for cloud processing.
+*   **Offline Capable:** Works without an internet connection.
+*   **Low Latency:** Immediate responses without network round-trips.
+
+## Getting Started
+
+The framework is deeply integrated with Swift, making it incredibly easy to use. The core class you'll interact with is `LanguageModelSession`.
+
+### Checking Availability
+
+Before using the model, you should check if it's available on the user's device. This requires the device to support Apple Intelligence.
+
+```swift
+import FoundationModels
+
+if SystemLanguageModel.default.isAvailable {
+    print("Foundation Models are ready to go!")
+} else {
+    print("This device does not support Foundation Models.")
+}
+```
+
+### Basic Text Generation
+
+Generating text is straightforward. You create a session and simply ask for a response.
+
+```swift
+let session = try LanguageModelSession(model: .system)
+let response = try await session.generate("Explain the concept of 'recursion' in programming.")
+print(response)
+```
+
+## Advanced Features: Guided Generation
+
+One of the most powerful features is **Guided Generation**. Instead of parsing raw string output, you can ask the model to generate structured data that matches your Swift types.
+
+```swift
+import FoundationModels
+
+@Generable
+struct Recipe {
+    let title: String
+    let ingredients: [String]
+    let steps: [String]
+}
+
+let session = try LanguageModelSession(model: .system)
+let recipe: Recipe = try await session.generate("Create a simple pancake recipe.")
+```
+
+Using `@Generable` and `@Guide` macros, the framework ensures the model's output conforms perfectly to your struct, eliminating the need for complex prompt engineering and JSON parsing.
+
+## Implemented in Rider Weather
+
+I have already started leveraging these capabilities in my own projects. In **[Rider Weather](/projects/rider-weather)**, I'm exploring ways to use on-device intelligence to provide even more personalized weather summaries and riding advice based on complex local conditions.
+
+
+
+## What's Next?
+
+I have many more ideas for implementing Apple Foundation Models across my apps. The potential for "Tool Calling"—where the model can intelligently invoke functions within your app—opens up a new world of possibilities for natural language interfaces.
+
+Stay tuned for more updates as I dive deeper into building with Apple Intelligence!
